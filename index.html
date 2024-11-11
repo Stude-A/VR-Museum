@@ -1,3 +1,48 @@
-<h1>
-	hello world
-</h1>
+<!DOCTYPE html>
+<html>
+	<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>VR Plane Museum </title>
+  <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
+  <script src="https://cdn.rawgit.com/donmccurdy/aframe-extras/v4.1.2/dist/aframe-extras.controls.min.js"></script>
+</head>
+<body>
+    <a-scene>
+        
+		<!--- <a-sky color="blue"></a-sky> -->
+        <a-assets>
+          <a-asset-item id="planeModel" src="Modelos/Planes/L1 Plane/11803_Airplane_v1_l1.obj"></a-asset-item>
+          <a-asset-item id="planeMaterial" src="Modelos/Planes/L1 Plane/11803_Airplane_v1_l1.mtl"></a-asset-item>
+        </a-assets>
+    
+		<!--- Plano de referencia -->
+        <a-entity>
+          <a-plane position="0 0 0" rotation="-90 0 0" width="10" height="10" color="#7BC8A4" opacity="0.5"></a-plane>
+          <a-entity line="start: -5 0 0; end: 5 0 0; color: #000"></a-entity>
+          <a-entity line="start: 0 0 -5; end: 0 0 5; color: #000"></a-entity>
+        </a-entity>
+    
+		
+        <a-entity obj-model="obj: #planeModel; mtl: #planeMaterial" position="0 10 -300" rotation="-110 90 -90" scale="0.1 0.1 0.1"
+          animation__click="property: scale; to: 0.05 0.05 0.05; dur: 500; startEvents: click; dir: alternate; loop: 2">
+        </a-entity>
+
+        <!-- Cuadro de texto con título y descripción -->
+		<a-entity position="0 3 -5">
+			<!-- Fondo del cuadro de texto -->
+			<a-plane position="0 0.5 0" width="4" height="2" color="#FFF" opacity="0.7"></a-plane>
+			
+			<!-- Título del avión -->
+			<a-text value="Plane Title" color="#000" position="0 0.75 0.01" align="center" width="4"></a-text>
+			
+			<!-- Descripción del avión -->
+			<a-text value="Plane Description" color="#000" position="0 0.25 0.01" align="center" width="4"></a-text>
+		  </a-entity>
+    
+
+      </a-scene>
+
+	 
+</body>
+</html>
