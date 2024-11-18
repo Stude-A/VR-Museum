@@ -6,6 +6,8 @@
   <title>VR Plane Museum </title>
   <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
   <script src="https://cdn.rawgit.com/donmccurdy/aframe-extras/v4.1.2/dist/aframe-extras.controls.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+
 </head>
 <body>
     <a-scene>
@@ -15,6 +17,9 @@
           <a-asset-item id="planeModel" src="Modelos/Planes/L1 Plane/11803_Airplane_v1_l1.obj"></a-asset-item>
           <a-asset-item id="planeMaterial" src="Modelos/Planes/L1 Plane/11803_Airplane_v1_l1.mtl"></a-asset-item>
         </a-assets>
+         <!-- Cilindro largo debajo del avión -->
+    <a-cylinder position="0 -70 -300" radius="60" height="70" color="#FF0000"></a-cylinder>
+
     
 		<!--- Plano de referencia -->
         <a-entity>
@@ -28,14 +33,18 @@
           animation__click="property: scale; to: 0.05 0.05 0.05; dur: 500; startEvents: click; dir: alternate; loop: 2">
         </a-entity>
 
-        <!-- Cuadro de texto con título y descripción -->
-		<a-entity position="0 3 -5">
+     
+
+ <!-- Cámara con controles y botones -->
+ <a-entity camera look-controls wasd-controls="acceleration: 200">
+  <a-cursor></a-cursor>
+
+     <!-- Cuadro de texto con título y descripción -->
+     <a-entity position="0 3 -5">
 			<!-- Fondo del cuadro de texto -->
 			<a-plane position="0 0.5 0" width="4" height="2" color="#FFF" opacity="0.7"></a-plane>
 			
-        <!-- Cilindro largo debajo del avión -->
-    <a-cylinder position="0 -70 -300" radius="60" height="70" color="#FF0000"></a-cylinder>
-
+       
 
 
 			<!-- Título del avión -->
@@ -44,7 +53,24 @@
 			<!-- Descripción del avión -->
 			<a-text value="Largest Commercial plane as it has 4 turbines" color="#000" position="0 0.25 0.01" align="center" width="4"></a-text>
 		  </a-entity>
-    
+
+  <!-- Botón de anterior -->
+  <a-circle position="-1 1 -2" radius="0.15" color="#4CAF50"
+            event-set__mouseenter="_event: mouseenter; color: #3e8e41"
+            event-set__mouseleave="_event: mouseleave; color: #4CAF50"
+            event-set__click="_event: click; _target: #planeModel; scale: 0.1 0.1 0.1">
+    <a-text value="<" align="center" position="0 0 0.1" color="#FFF"></a-text>
+  </a-circle>
+
+  <!-- Botón de siguiente -->
+  <a-circle position="1 1 -2" radius="0.15" color="#4CAF50"
+            event-set__mouseenter="_event: mouseenter; color: #3e8e41"
+            event-set__mouseleave="_event: mouseleave; color: #4CAF50"
+            event-set__click="_event: click; _target: #planeModel; scale: 0.2 0.2 0.2">
+    <a-text value=">" align="center" position="0 0 0.1" color="#FFF"></a-text>
+  </a-circle>
+</a-entity>
+        
 
       </a-scene>
 
