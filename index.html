@@ -17,6 +17,8 @@
           <a-asset-item id="planeModel" src="Modelos/Planes/L1 Plane/11803_Airplane_v1_l1.obj"></a-asset-item>
           <a-asset-item id="planeMaterial" src="Modelos/Planes/L1 Plane/11803_Airplane_v1_l1.mtl"></a-asset-item>
           <a-asset-item id="boldFont" src="https://cdn.aframe.io/fonts/mozillavr.fnt"></a-asset-item>
+
+          <audio id="planeASound" src="Music/SFX/Plane-A.mp3"></audio>
     
         </a-assets>
          <!-- Cilindro largo debajo del avión -->
@@ -31,22 +33,24 @@
 
         <a-entity id="planeEntity" obj-model="obj: #planeModel; mtl: #planeMaterial" 
           position="0 10 -300" rotation="-110 90 -90" scale="0.1 0.1 0.1" class="clickable"
-          animation__fly="property: position; to: 900 240 -300; dur: 4000; easing: linear; startEvents: click"
-          animation__disappear="property: visible; to: false; dur: 1.5; startEvents: animationcomplete__fly"
-          animation__reappear="property: position; to: -300 0 -300; dur: 1; startEvents: animationcomplete__disappear; property: visible; to: true"
-          animation__return="property: position; to: 0 10 -300; dur: 3000; easing: linear; startEvents: animationcomplete__reappear">
+
+          animation__fly="property: position; to: 900 240 -300; dur: 8000; easing: linear; startEvents: click"
+          animation__disappear="property: visible; to: false; dur: 3; startEvents: animationcomplete__fly"
+          animation__reappear="property: visible; to: true; property: position; to: -500 -200 -300; dur: 2; startEvents: animationcomplete__disappear"
+          animation__return="property: position; to: 0 10 -300; dur: 10000; easing: linear; startEvents: animationcomplete__reappear"
+          > 
+
 </a-entity>
 
-      
-        
 
-     
+    
+    <!-- Cámara con controles y cursor -->
+    <a-entity id="cameraRig" position="0 1.6 0" wasd-controls="acceleration: 200">
+      <a-entity id="camera" camera look-controls>
+        <a-cursor raycaster="objects: .clickable" fuse="false"></a-cursor>
+      </a-entity>
 
- <!-- Cámara con controles y botones -->
- <a-entity camera look-controls wasd-controls="acceleration: 200">
-  <a-cursor></a-cursor>
-
-     <!-- Cuadro de texto con título y descripción -->
+    <!-- Cuadro de texto con título y descripción -->
      <a-entity position="0 3 -5">
 			<!-- Fondo del cuadro de texto -->
 			<a-plane position="0 0.5 0" width="4" height="2" color="#FFF" opacity="0.7"></a-plane>
@@ -58,96 +62,101 @@
 			<a-text value="Largest Commercial plane as it has 4 turbines" color="#000" position="0 0.25 0.01" align="center" width="4"></a-text>
 		  </a-entity>
 
-  <!-- Botón de anterior -->
-  <a-circle position="-1 1 -2" radius="0.15" color="#4CAF50"
-            event-set__mouseenter="_event: mouseenter; color: #3e8e41"
-            event-set__mouseleave="_event: mouseleave; color: #4CAF50"
-            event-set__click="_event: click; _target: #planeModel; scale: 0.1 0.1 0.1">
-    <a-text value="<" align="center" position="0 0 0.1" color="#FFF"></a-text>
-  </a-circle>
 
-  <!-- Botón de siguiente -->
-  <a-circle position="1 1 -2" radius="0.15" color="#4CAF50"
-            event-set__mouseenter="_event: mouseenter; color: #3e8e41"
-            event-set__mouseleave="_event: mouseleave; color: #4CAF50"
-            event-set__click="_event: click; _target: #planeModel; scale: 0.2 0.2 0.2">
-    <a-text value=">" align="center" position="0 0 0.1" color="#FFF"></a-text>
-  </a-circle>
+      <!-- Botón de anterior -->
+      <a-circle id="prevButton" position="-1.2 1.2 -2" radius="0.1" color="#3529be" class="clickable" look-at="#cameraRig">
+        <a-text value="<" align="center" position="0 0 0" color="#FFF" width="3.2"></a-text>
+      </a-circle>
 
-   <!-- Botón de restablecer cámara -->
-   <a-entity position="-1.5 -1.5 -2">
-    <a-plane width=".8" height="0.2" color="#4CAF50" class="clickable"
-             event-set__mouseenter="_event: mouseenter; color: #3e8e41"
-             event-set__mouseleave="_event: mouseleave; color: #4CAF50"
-             event-set__click="_event: click; _target: #camera; _delay: 0; position: 0 0 0; rotation: 0 0 0; radius: 3 ">
-      <a-text value="Reset Camera" align="center" position="0 0 0" color="#FFF" width="2"></a-text>
-    </a-plane>
-  </a-entity>
-</a-entity>
+      <!-- Botón de siguiente -->
+      <a-circle id="nextButton" position="1.2 1.2 -2" radius="0.1" color="#4CAF50" class="clickable" look-at="#cameraRig">
+        <a-text value=">" align="center" position="0 0 0" color="#FFF" width="3.2"></a-text>
+      </a-circle>
+
+      <!-- Botón de regresar al origen -->
+      <a-circle id="resetButton" position="-2 -1.5 -2.5" radius="0.2" color="#FF0000" class="clickable" look-at="#cameraRig">
+        <a-text value="Reset" align="center" position="0 0 0" color="#FFF" width="3"></a-text>
+      </a-circle>
+    </a-entity>
+
     <script>
-      // Elemento del avión
+      // Función para generar un color aleatorio
+      function getRandomColor() {
+        const letters = '0123456789ABCDEF';
+        let color = '#';
+        for (let i = 0; i < 6; i++) {
+          color += letters[Math.floor(Math.random() * 16)];
+        }
+        return color;
+      }
+
+      // Agregar eventos de clic a los botones para cambiar el color a uno aleatorio
+      document.querySelector('#prevButton').addEventListener('click', function () {
+        const newColor = getRandomColor();
+        this.setAttribute('color', newColor);
+        console.log('Botón de anterior clicado, nuevo color:', newColor);
+      });
+
+      document.querySelector('#nextButton').addEventListener('click', function () {
+        const newColor = getRandomColor();
+        this.setAttribute('color', newColor);
+        console.log('Botón de siguiente clicado, nuevo color:', newColor);
+      });
+
+      // Agregar evento de clic al botón de regresar al origen
+      document.querySelector('#resetButton').addEventListener('click', function () {
+        const cameraRig = document.querySelector('#cameraRig');
+        const camera = document.querySelector('#camera');
+        cameraRig.setAttribute('position', '0 1.6 0');
+        cameraRig.setAttribute('rotation', '0 0 0');
+        camera.removeAttribute('look-controls');
+        camera.setAttribute('look-controls', '');
+        console.log('Botón de regresar al origen clicado, posición de la cámara restablecida');
+      });
+
+
+
+
+
+ // Primero, vamos a crear un evento que inicie el contexto de audio en cuanto el usuario interactúe
+ let audioContextResumed = false;
+
+// Función para activar el contexto de audio cuando el usuario haga clic
+function resumeAudioContext() {
+  if (!audioContextResumed) {
+    // Activamos el contexto de audio
+    const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+    audioContext.resume();
+    audioContextResumed = true;
+    console.log('AudioContext resuming...');
+  }
+}
+
+// Este evento de clic asegura que el AudioContext se reanude cuando el usuario haga clic en cualquier parte de la escena
+document.querySelector('a-scene').addEventListener('click', resumeAudioContext);
+
+// Reproducir sonido al hacer clic en el avión
 const plane = document.querySelector('#planeEntity');
-
-// 1. Comenzar vuelo cuando se hace clic
+const planeSound = document.querySelector('#planeASound');
 plane.addEventListener('click', function () {
-  this.emit('click'); // Inicia la animación de vuelo
+  // Reproducir el sonido solo después de que el AudioContext haya sido activado
+  if (audioContextResumed) {
+    planeSound.play();
+    console.log('Sonido del avión reproducido');
+  }
 });
 
-// 2. Al completar el vuelo (fly), desaparecer
-plane.addEventListener('animationcomplete__fly', function () {
-  this.emit('animationcomplete__fly'); // Desaparición
-});
 
-// 3. Al completar la desaparición, reaparecer en la esquina inferior izquierda
+
+//Al completar la desaparición, reaparecer en la esquina inferior izquierda
 plane.addEventListener('animationcomplete__disappear', function () {
   this.setAttribute('position', '-500 -200 -300'); // Mover a la esquina
   this.setAttribute('visible', true);          // Hacerlo visible
-  this.emit('animationcomplete__disappear');   // Reaparecer
-});
-
-// 4. Al reaparecer, regresar a la posición inicial
-plane.addEventListener('animationcomplete__reappear', function () {
-  this.emit('animationcomplete__reappear'); // Inicia el retorno
 });
 
 
-      
-      AFRAME.registerComponent('disable-w-movement', {
-        init: function () {
-          this.el.addEventListener('componentchanged', this.checkRotation.bind(this));
-        },
-        checkRotation: function (evt) {
-          if (evt.detail.name === 'rotation') {
-            const rotation = this.el.getAttribute('rotation');
-            if (rotation.x > 45) { // Si la rotación en el eje X es mayor a 45 grados
-              this.disableW();
-            } else {
-              this.enableW();
-            }
-          }
-        },
-        disableW: function () {
-          document.addEventListener('keydown', this.preventW);
-        },
-        enableW: function () {
-          document.removeEventListener('keydown', this.preventW);
-        },
-        preventW: function (event) {
-          if (event.key === 'w' || event.key === 'W') {
-            event.preventDefault();
-          }
-        }
-      });
 
-      document.querySelector('#camera').setAttribute('disable-w-movement', '');
     </script>
-
-
-      </a-scene>
-
-      
-      
-
-	 
+  </a-scene>
 </body>
 </html>
