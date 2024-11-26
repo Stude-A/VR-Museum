@@ -1,0 +1,7 @@
+<a-entity id="planeEntity" 
+    class="clickable"
+    animation__fly="property: position; to: 900 240 -300; dur: 8000; easing: linear; startEvents: click"
+    animation__disappear="property: visible; to: false; dur: 3; startEvents: animationcomplete__fly"
+    animation__reappear="property: visible; to: true; property: position; to: -500 -200 -300; dur: 2; startEvents: animationcomplete__disappear"
+    animation__return="property: position; to: 0 10 -300; dur: 10000; easing: linear; startEvents: animationcomplete__reappear">
+</a-entity>

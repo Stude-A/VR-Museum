@@ -4,8 +4,10 @@
 <head>
   <meta charset="UTF-8">
   <title>VR Plane Museum </title>
+  <title>VR Plane Museum </title>
   <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
   <script src="https://cdn.rawgit.com/donmccurdy/aframe-extras/v4.1.2/dist/aframe-extras.controls.min.js"></script>
+  <script src="scripts.js" defer></script>
 
 </head>
 <body>
@@ -46,31 +48,36 @@
 
     
     <!-- Cámara con controles y cursor -->
-    <a-entity id="cameraRig" position="0 1.6 0" wasd-controls="acceleration: 200">
-      <a-entity id="camera" camera look-controls>
-        <a-cursor raycaster="objects: .clickable" fuse="false"></a-cursor>
-      </a-entity>
+ <!-- Cámara con controles -->
+<a-entity id="cameraRig" position="0 1.6 0" wasd-controls="acceleration: 200">
+  <a-entity id="camera" camera look-controls></a-entity>
+
+
+<!-- Controladores de Meta Quest -->
+<a-entity id="leftHand" tracked-controls="controller: 0; hand: left"></a-entity>
+<a-entity id="rightHand" tracked-controls="controller: 1; hand: right"></a-entity>
+
 
     <!-- Cuadro de texto con título y descripción -->
-     <a-entity position="0 3 -5">
+     <a-entity position="0 2.5 -5">
 			<!-- Fondo del cuadro de texto -->
-			<a-plane position="0 0.5 0" width="4" height="2" color="#FFF" opacity="0.7"></a-plane>
+			<a-plane position="0 0.5 0" width="4" height="2" color="#FFF" opacity="0.3"></a-plane>
     
 			<!-- Título del avión -->
-			<a-text  id="planeTitle" value="Airbus 580" color="#000" position="0 0.75 0.01" align="center" width="14" ></a-text>
+			<a-text  id="planeTitle" value="Airbus 580" color="#000" position="0 1 0.01" align="center" width="14" ></a-text>
 			
 			<!-- Descripción del avión -->
-			<a-text id="planeDescription" value="Largest Commercial plane as it has 4 turbines" color="#000" position="0 0.25 0.01" align="center" width="4"></a-text>
+			<a-text id="planeDescription" value="Largest Commercial plane as it has 4 turbines" color="#000" position="0 0 0.01" align="center" width="4"></a-text>
 		  </a-entity>
 
 
       <!-- Botón de anterior -->
-      <a-circle id="prevButton" position="-1.2 1.2 -2" radius="0.3" color="#3114d1" class="clickable" look-at="#cameraRig">
+      <a-circle id="prevButton" position="-1.2 1 -2" radius="0.3" color="#3114d1" opacity="0.7"  class="clickable" look-at="#cameraRig">
         <a-text value="<" align="center" position="0 0 0" color="#FFF" width="6"></a-text>
       </a-circle>
 
       <!-- Botón de siguiente -->
-      <a-circle id="nextButton" position="1.2 1.2 -2" radius="0.3" color="#3114d1" class="clickable" look-at="#cameraRig">
+      <a-circle id="nextButton" position="1.2 1 -2" radius="0.3" color="#3114d1" opacity="0.7" class="clickable" look-at="#cameraRig">
         <a-text value=">" align="center" position="0 0 0" color="#FFF" width="6"></a-text>
       </a-circle>
 
@@ -80,126 +87,7 @@
       </a-circle>
     </a-entity>
 
-    <script>
-      // Array de modelos de aviones con sus propiedades
-      const planeModels = [
-        {
-          id: 'planeModel',
-          material: 'planeMaterial',
-          position: '0 10 -300',
-          rotation: '-110 90 -90',
-          scale: '0.1 0.1 0.1',
-          title: 'Airbus 580',
-          description: 'Largest Commercial plane as it has 4 turbines'
-        },
-        {
-          id: 'planeModelB2',
-          material: 'planeMaterialB2',
-          position: '0 15 -300',
-          rotation: '-25 90 0',
-          scale: '30 30 30 ',
-          title: 'B-2 Spirit',
-          description: 'Stealth bomber with a unique flying wing design'
-        }
-      ];
 
-      let currentModelIndex = 1;
-
-      // Función para cambiar el modelo del avión
-      function changePlaneModel() {
-        const planeEntity = document.querySelector('#planeEntity');
-        const model = planeModels[currentModelIndex];
-        planeEntity.setAttribute('obj-model', `obj: #${model.id}; mtl: #${model.material}`);
-        planeEntity.setAttribute('position', model.position);
-        planeEntity.setAttribute('rotation', model.rotation);
-        planeEntity.setAttribute('scale', model.scale);
-
-        // Actualizar título y descripción
-        document.querySelector('#planeTitle').setAttribute('value', model.title);
-        document.querySelector('#planeDescription').setAttribute('value', model.description);
-
-        console.log(model.title, 'model loaded');
-      }
-
-      // Agregar eventos de clic a los botones para cambiar el modelo del avión
-      document.querySelector('#prevButton').addEventListener('click', function () {
-        currentModelIndex = (currentModelIndex - 1 + planeModels.length) % planeModels.length;
-        changePlaneModel();
-        console.log('Modelo de avión cambiado a:', planeModels[currentModelIndex].id);
-      });
-
-      document.querySelector('#nextButton').addEventListener('click', function () {
-        currentModelIndex = (currentModelIndex + 1) % planeModels.length;
-        changePlaneModel();
-        console.log('Modelo de avión cambiado a:', planeModels[currentModelIndex].id);
-      });
-
-      // Agregar eventos de clic a los botones para cambiar el modelo del avión
-      document.querySelector('#prevButton').addEventListener('click', function () {
-        changePlaneModel('planeModelB2', 'planeMaterialB2');
-        console.log('Modelo de avión cambiado a B2');
-      });
-
-      document.querySelector('#nextButton').addEventListener('click', function () {
-        changePlaneModel('planeModelB2', 'planeMaterialB2');
-        console.log('Modelo de avión cambiado a B2');
-      });
-
-      // Agregar evento de clic al botón de regresar al origen
-      document.querySelector('#resetButton').addEventListener('click', function () {
-        const cameraRig = document.querySelector('#cameraRig');
-        const camera = document.querySelector('#camera');
-        cameraRig.setAttribute('position', '0 1.6 0');
-        cameraRig.setAttribute('rotation', '0 0 0');
-        camera.removeAttribute('look-controls');
-        camera.setAttribute('look-controls', '');
-        console.log('Botón de regresar al origen clicado, posición de la cámara restablecida');
-      });
-
-
-
-
-
- // Primero, vamos a crear un evento que inicie el contexto de audio en cuanto el usuario interactúe
- let audioContextResumed = false;
-
-// Función para activar el contexto de audio cuando el usuario haga clic
-function resumeAudioContext() {
-  if (!audioContextResumed) {
-    // Activamos el contexto de audio
-    const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-    audioContext.resume();
-    audioContextResumed = true;
-    console.log('AudioContext resuming...');
-  }
-}
-
-// Este evento de clic asegura que el AudioContext se reanude cuando el usuario haga clic en cualquier parte de la escena
-document.querySelector('a-scene').addEventListener('click', resumeAudioContext);
-
-// Reproducir sonido al hacer clic en el avión
-const plane = document.querySelector('#planeEntity');
-const planeSound = document.querySelector('#planeASound');
-plane.addEventListener('click', function () {
-  // Reproducir el sonido solo después de que el AudioContext haya sido activado
-  if (audioContextResumed) {
-    planeSound.play();
-    console.log('Sonido del avión reproducido');
-  }
-});
-
-//Al completar la desaparición, reaparecer en la esquina inferior izquierda
-plane.addEventListener('animationcomplete__disappear', function () {
-  this.setAttribute('position', '-500 -200 -300'); // Mover a la esquina
-  this.setAttribute('visible', true);          // Hacerlo visible
-});
-
-
-
-      // Inicializar el modelo del avión basado en currentModelIndex
-      changePlaneModel();
-
-    </script>
   </a-scene>
 </body>
 </html>
