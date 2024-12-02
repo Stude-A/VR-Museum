@@ -18,23 +18,55 @@ const planeModels = [
     scale: '30 30 30',
     title: 'B-2 Spirit',
     description: 'The B-2 Spirit is a stealth bomber. Its special design makes it almost undetectable by radar, allowing it to attack enemy targets without being detected.'
+  }, {
+    id: 'planeModelB737',
+    material: 'planeMaterialB737',
+    position: '0 -5 -300',
+    rotation: '-20 90 0',
+    scale: '7 7 7 ',
+    title: 'Boeing 737',
+    description: ' The Boeing 737 is a short- to medium-range commercial airplane, one of the most popular and best-selling in the history of aviation.'
+  }
+  ,
+  {
+    id: 'planeModelP-51',
+    position: '0 -5 -300',
+    rotation: '-5 90 0',
+    scale: '3 3 3 ',
+    title: 'P-51 Mustang',
+    description: 'The P-51 Mustang is a historic World War II fighter known for its speed and agility.'
   }
 ];
 
-let currentModelIndex = 1;
+let currentModelIndex = 3;
 
 // Función genérica para actualizar atributos de un elemento
 function setAttributes(element, attributes) {
   Object.keys(attributes).forEach(attr => element.setAttribute(attr, attributes[attr]));
 }
 
-// Cambiar el modelo del avión
 function changePlaneModel(index = currentModelIndex) {
   const planeEntity = document.querySelector('#planeEntity');
   const model = planeModels[index];
 
+  // Eliminar el modelo anterior
+  while (planeEntity.firstChild) {
+    planeEntity.removeChild(planeEntity.firstChild);
+  }
+
+
+
+  // Detectar si el modelo es .glb
+  if (model.id.endsWith('51')) {
+    console.log((model.id))
+    planeEntity.setAttribute('gltf-model', `#${model.id}`);
+
+  } else {
+    planeEntity.setAttribute('obj-model', `obj: #${model.id}; mtl: #${model.material}`);
+  }
+
+  // Establecer atributos comunes
   setAttributes(planeEntity, {
-    'obj-model': `obj: #${model.id}; mtl: #${model.material}`,
     position: model.position,
     rotation: model.rotation,
     scale: model.scale
@@ -46,6 +78,7 @@ function changePlaneModel(index = currentModelIndex) {
 
   console.log(`${model.title} model loaded`);
 }
+
 
 // Cambiar entre modelos previos y siguientes
 function addModelChangeListeners() {
