@@ -9,7 +9,7 @@ const planeModels = [
     scale: '0.1 0.1 0.1',
     title: 'Airbus A380',
     description: 'The Airbus A380 is the world\'s largest passenger aircraft, capable of carrying hundreds of passengers in a single flight, offering a unique travel experience.',
-    audio: 'Modelos/Planes/L1 Plane/Top Gun Anthem - Music Video (Tom Cruise Maverick).mp3'
+    audio: 'Modelos/Planes/L1 Plane/Run That Race.mp3'
   },
   {
     id: 'planeModelB2',
