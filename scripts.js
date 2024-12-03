@@ -8,7 +8,8 @@ const planeModels = [
     rotation: '-110 90 -90',
     scale: '0.1 0.1 0.1',
     title: 'Airbus A380',
-    description: 'The Airbus A380 is the world\'s largest passenger aircraft, capable of carrying hundreds of passengers in a single flight, offering a unique travel experience.'
+    description: 'The Airbus A380 is the world\'s largest passenger aircraft, capable of carrying hundreds of passengers in a single flight, offering a unique travel experience.',
+    audio: 'Modelos/Planes/L1 Plane/Top Gun Anthem - Music Video (Tom Cruise Maverick).mp3'
   },
   {
     id: 'planeModelB2',
@@ -17,7 +18,8 @@ const planeModels = [
     rotation: '-25 90 0',
     scale: '30 30 30',
     title: 'B-2 Spirit',
-    description: 'The B-2 Spirit is a stealth bomber. Its special design makes it almost undetectable by radar, allowing it to attack enemy targets without being detected.'
+    description: 'The B-2 Spirit is a stealth bomber. Its special design makes it almost undetectable by radar, allowing it to attack enemy targets without being detected.',
+    audio: 'Modelos/Planes/B2/U.S Navy - Danger Zone  Carrier Deck Ops.mp3'
   }, {
     id: 'planeModelB737',
     material: 'planeMaterialB737',
@@ -25,20 +27,25 @@ const planeModels = [
     rotation: '-20 90 0',
     scale: '7 7 7 ',
     title: 'Boeing 737',
-    description: ' The Boeing 737 is a short- to medium-range commercial airplane, one of the most popular and best-selling in the history of aviation.'
+    description: ' The Boeing 737 is a short- to medium-range commercial airplane, one of the most popular and best-selling in the history of aviation.',
+    audio: 'Modelos/Planes/Boeing 737/Top Gun Anthem - Music Video (Tom Cruise Maverick).mp3'
   }
   ,
   {
-    id: 'planeModelP-51',
+    id: 'planeModelP-51glb',
     position: '0 -5 -300',
     rotation: '-5 90 0',
-    scale: '3 3 3 ',
+    scale: '3 3 3',
     title: 'P-51 Mustang',
-    description: 'The P-51 Mustang is a historic World War II fighter known for its speed and agility.'
+    description: 'The P-51 Mustang is a historic World War II fighter known for its speed and agility.',
+    audio: 'Modelos/Planes/P-51 Mustang/Mute City Ver. 2 (Brawl Remix).mp3'
   }
 ];
 
-let currentModelIndex = 3;
+let currentModelIndex = Math.floor(Math.random() * planeModels.length);
+let audioPlayer = new Audio();
+audioPlayer.loop = true;
+
 
 // Función genérica para actualizar atributos de un elemento
 function setAttributes(element, attributes) {
@@ -49,18 +56,30 @@ function changePlaneModel(index = currentModelIndex) {
   const planeEntity = document.querySelector('#planeEntity');
   const model = planeModels[index];
 
+  if (index < 0 || index >= planeModels.length) return;
+
+  const currentTime = audioPlayer.currentTime;
+  const newModel = planeModels[index];
+
+  audioPlayer.src = newModel.audio;
+  audioPlayer.currentTime = currentTime;
+  audioPlayer.play();
+
+  currentModelIndex = index;
+
   // Eliminar el modelo anterior
   while (planeEntity.firstChild) {
     planeEntity.removeChild(planeEntity.firstChild);
   }
 
-
+  // ** Elimina atributos conflictivos antes de agregar uno nuevo **
+  planeEntity.removeAttribute('obj-model');
+  planeEntity.removeAttribute('gltf-model');
 
   // Detectar si el modelo es .glb
-  if (model.id.endsWith('51')) {
-    console.log((model.id))
+  if (model.id.endsWith('glb')) { // Ajusta esta condición si usas otro criterio
+    console.log((model.id));
     planeEntity.setAttribute('gltf-model', `#${model.id}`);
-
   } else {
     planeEntity.setAttribute('obj-model', `obj: #${model.id}; mtl: #${model.material}`);
   }
@@ -78,6 +97,7 @@ function changePlaneModel(index = currentModelIndex) {
 
   console.log(`${model.title} model loaded`);
 }
+
 
 
 // Cambiar entre modelos previos y siguientes
@@ -155,10 +175,9 @@ function setupControls() {
 
 
 
-// ** Movimiento del rig con joystick Xbox o Meta Quest **
 AFRAME.registerComponent('controller-movement', {
-  schema: { speed: { type: 'number', default: 0.6} },
-  
+  schema: { speed: { type: 'number', default: 0.6 } },
+
   init: function () {
     this.camera = document.querySelector('#camera');
     this.rig = document.querySelector('#cameraRig');
@@ -173,10 +192,10 @@ AFRAME.registerComponent('controller-movement', {
       if (pad) {
         const [x, y] = isMetaQuest ? pad.axes.slice(2, 4) : pad.axes.slice(0, 2); // Joystick derecho o izquierdo
         if (Math.abs(x) > 0.1 || Math.abs(y) > 0.1) {
-          // Obtener la dirección de la cámara
+          // Obtener la dirección en la que está mirando la cámara
           const cameraWorldDirection = new THREE.Vector3();
           this.camera.object3D.getWorldDirection(cameraWorldDirection);
-          cameraWorldDirection.normalize(); // Normalizar la dirección
+          cameraWorldDirection.normalize(); // Normalizar la dirección hacia adelante
 
           // Obtener la dirección lateral (cruzada con el eje Y global)
           const strafeDirection = new THREE.Vector3().crossVectors(cameraWorldDirection, new THREE.Vector3(0, 1, 0)).normalize();
@@ -184,7 +203,7 @@ AFRAME.registerComponent('controller-movement', {
           // Inicializar el vector de movimiento
           let movement = new THREE.Vector3();
 
-          // Calcular el movimiento en función de las teclas
+          // Calcular el movimiento en función de los controles
           if (Math.abs(x) > 0.1) movement.add(strafeDirection.multiplyScalar(-x)); // Movimiento lateral (A/D)
           if (Math.abs(y) > 0.1) movement.add(cameraWorldDirection.multiplyScalar(y)); // Movimiento hacia adelante/atrás (W/S)
 
@@ -206,7 +225,26 @@ AFRAME.registerComponent('controller-movement', {
     });
   }
 });
+
+
 document.querySelector('#cameraRig').setAttribute('controller-movement', '');
+
+document.addEventListener('DOMContentLoaded', () => {
+  const playButton = document.querySelector('#soundButton');
+  const playButtonText = document.querySelector('#soundButtonText');
+  let isMuted = false;
+
+  playButton.addEventListener('click', () => {
+    if (isMuted) {
+      audioPlayer.muted = false;
+      playButtonText.setAttribute('value', 'Mute');
+    } else {
+      audioPlayer.muted = true;
+      playButtonText.setAttribute('value', 'Unmute');
+    }
+    isMuted = !isMuted;
+  });
+});
 
 
 

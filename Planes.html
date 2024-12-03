@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+	<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <title>VR Plane Museum </title>
+  <title>VR Plane Museum </title>
+  <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
+  <script src="https://cdn.rawgit.com/donmccurdy/aframe-extras/v4.1.2/dist/aframe-extras.controls.min.js"></script>
+  <script src="scripts.js" defer></script>
+<!--  Icono-->
+  <link rel="icon" href="airplane.ico">
+
+
+
+</head>
+<body>
+
+    <a-scene>
+        
+      <a-sky id="sky" src="puresky.jpg" rotation="0 -90 0"></a-sky>
+
+        <a-assets>
+          <a-asset-item id="planeModel" src="Modelos/Planes/L1 Plane/11803_Airplane_v1_l1.obj"></a-asset-item>
+          <a-asset-item id="planeMaterial" src="Modelos/Planes/L1 Plane/11803_Airplane_v1_l1.mtl"></a-asset-item>
+          <a-asset-item id="boldFont" src="https://cdn.aframe.io/fonts/mozillavr.fnt"></a-asset-item>
+          <audio id="planeASound" src="Music/SFX/Plane-A.mp3"></audio>
+
+          <a-asset-item id="planeModelB2" src="Modelos/Planes/B2/B-2_high.obj"></a-asset-item>
+          <a-asset-item id="planeMaterialB2" src="Modelos/Planes/B2/B-2_high.mtl"></a-asset-item>
+
+          <a-asset-item id="planeModelB737" src="Modelos/Planes/Boeing 737/AirplaneForFreeobj.obj"></a-asset-item>
+          <a-asset-item id="planeMaterialB737" src="Modelos/Planes/Boeing 737/AirplaneForFreeobj.mtl"></a-asset-item>
+
+          <a-asset-item id="planeModelP-51glb" src="Modelos/Planes/P-51 Mustang/p51-mustang.glb"></a-asset-item>
+
+   
+    
+        </a-assets>
+         <!-- Cilindro largo debajo del avión -->
+    <a-cylinder position="0 -70 -300" radius="60" height="70" color="#FF0000"></a-cylinder>
+    
+		<!--- Plano de referencia -->
+        <a-entity>
+          <a-plane position="0 -3 0" rotation="-90 0 0" width="10" height="10" color="#7BC8A4" opacity="0.5"></a-plane>
+
+
+        </a-entity>
+
+        <a-entity id="planeEntity" 
+          class="clickable"
+          animation__fly="property: position; to: 900 240 -300; dur: 8000; easing: linear; startEvents: click"
+          animation__disappear="property: visible; to: false; dur: 3; startEvents: animationcomplete__fly"
+          animation__reappear="property: visible; to: true; property: position; to: -500 -200 -300; dur: 2; startEvents: animationcomplete__disappear"
+          animation__return="property: position; to: 0 10 -300; dur: 10000; easing: linear; startEvents: animationcomplete__reappear"
+          >
+</a-entity>
+
+
+    
+    <!-- Cámara con controles y cursor -->
+ <!-- Cámara con controles -->
+<a-entity id="cameraRig" position="0 1.6 0" wasd-controls="acceleration: 200">
+  <a-entity id="camera" camera look-controls></a-entity>
+
+
+<!-- Controladores de Meta Quest -->
+<a-entity id="leftHand" tracked-controls="controller: 0; hand: left"></a-entity>
+<a-entity id="rightHand" tracked-controls="controller: 1; hand: right"></a-entity>
+
+
+    <!-- Cuadro de texto con título y descripción -->
+     <a-entity position="0 2.5 -5">
+			<!-- Fondo del cuadro de texto -->
+			<a-plane position="0 0.5 0" width="4" height="2" color="#FFF" opacity="0.3"></a-plane>
+    
+			<!-- Título del avión -->
+			<a-text  id="planeTitle" value="Airbus 580" color="#000" position="0 1 0.01" align="center" width="14" ></a-text>
+			
+			<!-- Descripción del avión -->
+			<a-text id="planeDescription" value="Largest Commercial plane as it has 4 turbines" color="#000" position="0 0 0.01" align="center" width="4"></a-text>
+		  </a-entity>
+
+
+      <!-- Botón de anterior -->
+      <a-circle id="prevButton" position="-1.2 1 -2" radius="0.3" color="#3114d1" opacity="0.7"  class="clickable" look-at="#cameraRig">
+        <a-text value="<" align="center" position="0 0 0" color="#FFF" width="6"></a-text>
+      </a-circle>
+
+      <!-- Botón de siguiente -->
+      <a-circle id="nextButton" position="1.2 1 -2" radius="0.3" color="#3114d1" opacity="0.7" class="clickable" look-at="#cameraRig">
+        <a-text value=">" align="center" position="0 0 0" color="#FFF" width="6"></a-text>
+      </a-circle>
+
+      <!-- Botón de regresar al origen -->
+      <a-circle id="resetButton" position="-2 -1.5 -2.5" radius="0.2" color="#FF0000" class="clickable" look-at="#cameraRig">
+        <a-text value="Reset" align="center" position="0 0 0" color="#FFF" width="3"></a-text>
+      </a-circle>
+
+      <a-circle id="soundButton" position="2 -1.5 -2.5" radius="0.33" color="#990bbd" class="clickable" look-at="#cameraRig">
+        <a-text id="soundButtonText" value="Mute \n" align="center" position="0 0 0" color="#FFF" width="3"></a-text>
+    </a-entity>
+
+
+  </a-scene>
+</body>
+</html>
