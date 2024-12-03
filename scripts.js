@@ -27,7 +27,7 @@ const planeModels = [
     rotation: '-20 90 0',
     scale: '7 7 7 ',
     title: 'Boeing 737',
-    description: ' The Boeing 737 is a short- to medium-range commercial airplane, one of the most popular and best-selling in the history of aviation.',
+    description: ' The Boeing 737 is a short to medium-range commercial airplane, one of the most popular and best-selling in the history of aviation.',
     audio: 'Modelos/Planes/Boeing 737/Top Gun Anthem - Music Video (Tom Cruise Maverick).mp3'
   }
   ,
